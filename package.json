@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "nodemon bin/www",  
     "client":"cd Client && npm run start-dev", 
+    "homepage": "./Client",
     "start": "concurrently \"nodemon bin/www\" \"npm run client\"",
     "start-dev": "PORT=2000 react-scripts start",    
     "build": "react-scripts build && gulp licenses",

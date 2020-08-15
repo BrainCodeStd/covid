@@ -9,9 +9,10 @@ var app = express();
 const Covid = require('./Models/covid')
 const os = require('os')
 const mongoose = require("mongoose")
-
+const bodyParser = require('body-parser')
 require('dotenv').config()
-mongoose.connect("mongodb+srv://unicoursework:mNjrPhKgRk3H1fCh@cluster0.kr3qw.mongodb.net/covid?retryWrites=true&w=majority",
+// mongodb+srv://unicoursework:mNjrPhKgRk3H1fCh@cluster0.kr3qw.mongodb.net/covid?retryWrites=true&w=majority
+mongoose.connect("mongodb://localhost/mydb",
     { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('MongoDb successsFully Connected!!'))
     .catch(err => console.log('Errror in connecting mongodb', err));
@@ -20,11 +21,24 @@ mongoose.connect("mongodb+srv://unicoursework:mNjrPhKgRk3H1fCh@cluster0.kr3qw.mo
 app.use(morgan('dev'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+app.use(bodyParser.urlencoded({ extended: false }))
+app.get('/', function (req, res) {
+    res.sendfile('index.html');
+});
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(express.static('./public'))
+
+app.get('/bootstrap.min.css', function (req, res) {
+    res.sendFile(path.join(__dirname, 'bootstrap.min.css'));
+});
+
+app.get('/style.css', function (req, res) {
+    res.sendFile(path.join(__dirname, 'skin-blue.min.css'));
+});
 
 app.post('/api/insert', async (req, res) => {
     try {
@@ -56,7 +70,6 @@ app.get('/api/fetch', async (req, res) => {
     try {
         let { date, country, state } = req.query;
         let query = {};
-
         if (date) query["date"] = new Date(date);
         if (state) query["state"] = new RegExp(state, 'i')
         if (country) query["country"] = new RegExp(country, 'i')
