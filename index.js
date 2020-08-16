@@ -32,14 +32,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static('./public'))
 
-app.get('/bootstrap.min.css', function (req, res) {
-    res.sendFile(path.join(__dirname, 'bootstrap.min.css'));
-});
-
-app.get('/style.css', function (req, res) {
-    res.sendFile(path.join(__dirname, 'skin-blue.min.css'));
-});
-
 app.post('/api/insert', async (req, res) => {
     try {
         let { date, country, state, cases, deaths } = req.body;
@@ -114,7 +106,7 @@ app.use(function (err, req, res, next) {
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'production' ? err : {};
     // render the error page 
-    return res.status(err.status || 500).render('error');
+    return res.status(err.status || 500).send('<h1>Internal server Error 500</h1>');
     // res.send('error');
     // res.end()
 });
