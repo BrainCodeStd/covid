@@ -7,10 +7,10 @@
     "node": "12.17.0"
   },
   "scripts": {
-    "dev": "nodemon bin/www",  
+    "dev": "nodemon index.js",  
     "client":"cd Client && npm run start-dev", 
     "homepage": "./Client",
-    "start": "concurrently \"nodemon bin/www\" \"npm run client\"",
+    "start": "node index.js",
     "start-dev": "PORT=2000 react-scripts start",    
     "build": "react-scripts build && gulp licenses",
     "test": "react-scripts test --env=jsdom",

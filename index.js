@@ -10,28 +10,27 @@ const Covid = require('./Models/covid')
 const os = require('os')
 const mongoose = require("mongoose")
 const bodyParser = require('body-parser')
+var http = require('http');
 require('dotenv').config()
-// mongodb+srv://unicoursework:mNjrPhKgRk3H1fCh@cluster0.kr3qw.mongodb.net/covid?retryWrites=true&w=majority
-mongoose.connect("mongodb://localhost/mydb",
+
+mongoose.connect("mongodb+srv://unicoursework:mNjrPhKgRk3H1fCh@cluster0.kr3qw.mongodb.net/covid?retryWrites=true&w=majority",
     { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('MongoDb successsFully Connected!!'))
     .catch(err => console.log('Errror in connecting mongodb', err));
 
 
+
+
 app.use(morgan('dev'));
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+
 app.use(bodyParser.urlencoded({ extended: false }))
-app.get('/', function (req, res) {
-    res.sendfile('index.html');
-});
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static('./public'))
 
+//insert the data
 app.post('/api/insert', async (req, res) => {
     try {
         let { date, country, state, cases, deaths } = req.body;
@@ -49,6 +48,7 @@ app.post('/api/insert', async (req, res) => {
         return res.status(400).send(error.message)
     }
 })
+//delete data api
 app.delete('/api/delete/:id', async (req, res) => {
     try {
         let { id } = req.params;
@@ -58,6 +58,7 @@ app.delete('/api/delete/:id', async (req, res) => {
         return res.status(400).send(error.message)
     }
 })
+//get data api
 app.get('/api/fetch', async (req, res) => {
     try {
         let { date, country, state } = req.query;
@@ -76,6 +77,7 @@ app.get('/api/fetch', async (req, res) => {
         return res.status(400).send(error.message)
     }
 })
+// get OS
 app.get('/api/OS', (req, res) => {
     try {
         return res.status(200).send({
@@ -88,27 +90,17 @@ app.get('/api/OS', (req, res) => {
 })
 
 
+var port = (process.env.PORT || '8836');
+app.set('port', port);
 
+/**
+ * Create HTTP server.
+ */
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-    next(createError(404));
-    // res.send('404 Error caught');
-});
+var server = http.createServer(app);
 
+/**
+ * Listen on provided port, on all network interfaces.
+ */
 
-
-
-
-// error handler
-app.use(function (err, req, res, next) {
-    // set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'production' ? err : {};
-    // render the error page 
-    return res.status(err.status || 500).send('<h1>Internal server Error 500</h1>');
-    // res.send('error');
-    // res.end()
-});
-
-module.exports = app;
+server.listen(port, () => console.log("server running on port", port));
